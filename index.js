@@ -1,12 +1,17 @@
 'use strict';
 
-const STORE = [
-  {name: "apples", checked: false},
-  {name: "oranges", checked: false},
-  {name: "milk", checked: true},
-  {name: "bread", checked: false}
-];
-console.log(STORE)
+
+//THIS IS ALL WRONG I WILL WORK ON THIS OVER THE WEEKEND
+const STORE = {
+  items: [
+    {name: "apples", checked: false},
+    {name: "oranges", checked: false},
+    {name: "milk", checked: true},
+    {name: "bread", checked: false}
+  ],
+
+  displayAll: false
+};
 
 function generateItemElement(item, itemIndex, template) {
   return `
@@ -24,7 +29,7 @@ function generateItemElement(item, itemIndex, template) {
 }
 
 
-function generateShoppingItemsString(shoppingList) {
+function generateShoppingItemsString(shoppingList) {//another version
   console.log("Generating shopping list element");
 
   const items = shoppingList.map((item, index) => generateItemElement(item, index));
@@ -32,20 +37,43 @@ function generateShoppingItemsString(shoppingList) {
   return items.join("");
 }
 
+function filterObject(arr) {
+  let arr2 = arr;
+
+  arr2.forEach(function(element, index){
+
+    if(element.checked === true){
+      arr2.splice(index, 1);
+    }
+
+  });
+
+  return arr2;
+}
+
 
 function renderShoppingList() {
   // render the shopping list in the DOM
   console.log('`renderShoppingList` ran');
-  const shoppingListItemsString = generateShoppingItemsString(STORE);
-
+  let data;
+  
+  if(STORE.displayAll === true) {
+    data = STORE.items;
+    console.log(data);
+  } else if(STORE.displayAll === false) {
+    data = filterObject(STORE.items);
+    console.log(data);
+  }
+  const shoppingListItemsString = generateItemElement(data);
   // insert that HTML into the DOM
   $('.js-shopping-list').html(shoppingListItemsString);
 }
 
 
+
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.push({name: itemName, checked: false});
+  STORE.items.push({name: itemName, checked: false});
 }
 
 function handleNewItemSubmit() {
@@ -59,9 +87,44 @@ function handleNewItemSubmit() {
   });
 }
 
+// function doSomethingToShoppingList(disCk) {
+//   if(!disCk) {
+//     //Display checked true
+//   } else {
+//     //Remove cheked true 
+//   }
+// }
+
+function addTheCheck(val) {
+  STORE.displayAll = val;
+  console.log(STORE.displayAll);
+}
+
+//HANDLE
+
+function handleDisplayCheck() {
+
+  let boolCheck = false;
+
+  $('#js-shopping-list-form').change(function(){
+    const newCheckVal = $('.js-display-list');
+    
+    if(newCheckVal.is(':checked')) {
+      boolCheck = true;
+    } else {
+      boolCheck = false;
+    }
+
+    addTheCheck(boolCheck);
+
+  })
+}
+
+
+
 function toggleCheckedForListItem(itemIndex) {
   console.log("Toggling checked property for item at index " + itemIndex);
-  STORE[itemIndex].checked = !STORE[itemIndex].checked;
+  STORE.items[itemIndex].checked = !STORE.items[itemIndex].checked;
 }
 
 
@@ -83,7 +146,7 @@ function handleItemCheckClicked() {
 
 function removeItemShoppingList(itemIndex) {
   console.log(`Deliting item ${itemIndex} from the list`)
-  STORE.splice(itemIndex, 1);
+  STORE.items.splice(itemIndex, 1);
 }
 
 function handleDeleteItemClicked(){
@@ -95,6 +158,8 @@ function handleDeleteItemClicked(){
   });
 }
 
+
+
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
@@ -104,6 +169,7 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
+  handleDisplayCheck();
 }
 
 // when the page loads, call `handleShoppingList`
