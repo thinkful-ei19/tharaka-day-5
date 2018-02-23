@@ -64,7 +64,7 @@ function renderShoppingList() {
     data = filterObject(STORE.items);
     console.log(data);
   }
-  const shoppingListItemsString = generateItemElement(data);
+  const shoppingListItemsString = generateShoppingItemsString(data);
   // insert that HTML into the DOM
   $('.js-shopping-list').html(shoppingListItemsString);
 }
@@ -116,7 +116,7 @@ function handleDisplayCheck() {
     }
 
     addTheCheck(boolCheck);
-
+    renderShoppingList();
   })
 }
 
